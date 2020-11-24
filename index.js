@@ -35,20 +35,12 @@ const TransportStream = module.exports = function TransportStream(options = {}) 
     // the `winston.Container` code in which `container.add` takes
     // a fully realized set of options with pre-constructed TransportStreams.
     this.levels = logger.levels;
-    this.parent = logger;
   });
 
   // If and/or when the transport is removed from this instance
   this.once('unpipe', src => {
-    // Remark (indexzero): this bookkeeping can only support multiple
-    // Logger parents with the same `levels`. This comes into play in
-    // the `winston.Container` code in which `container.add` takes
-    // a fully realized set of options with pre-constructed TransportStreams.
-    if (src === this.parent) {
-      this.parent = null;
-      if (this.close) {
-        this.close();
-      }
+    if (this.close) {
+      this.close();
     }
   });
 };
@@ -75,7 +67,7 @@ TransportStream.prototype._write = function _write(info, enc, callback) {
   // cannot conditionally write to our pipe targets as stream. We always
   // prefer any explicit level set on the Transport itself falling back to
   // any level set on the parent.
-  const level = this.level || (this.parent && this.parent.level);
+  const level = this.level;
 
   if (!level || this.levels[level] >= this.levels[info[LEVEL]]) {
     if (info && !this.format) {
@@ -182,7 +174,7 @@ TransportStream.prototype._accept = function _accept(write) {
 
   // We always prefer any explicit level set on the Transport itself
   // falling back to any level set on the parent.
-  const level = this.level || (this.parent && this.parent.level);
+  const level = this.level;
 
   // Immediately check the average case: log level filtering.
   if (
