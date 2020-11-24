@@ -1,5 +1,5 @@
 {
-  "name": "winston-transport",
+  "name": "@adoyle.me/winston-transport",
   "description": "Base stream implementations for winston@3 and up.",
   "version": "4.4.0",
   "main": "index.js",
